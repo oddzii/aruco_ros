@@ -1,6 +1,6 @@
 Remark
 =========
-This version changes coordinate system compatible with ROS standards.
+This version changes coordinate system compatible with ground mobile robot and aruco in front of them.  
 
 
 aruco_ros
