@@ -60,13 +60,13 @@ tf::Transform aruco_ros::arucoMarker2Tf(const aruco::Marker &marker)
 {
   tf2::Transform tf2_tf = arucoMarker2Tf2(marker);
   return tf::Transform(
-        tf::Matrix3x3(tf::Quaternion(tf2_tf.getRotation().x(),
-                                     tf2_tf.getRotation().y(),
+        tf::Matrix3x3(tf::Quaternion(tf2_tf.getRotation().y(),
+                                     tf2_tf.getRotation().w(),
                                      tf2_tf.getRotation().z(),
-                                     tf2_tf.getRotation().w())),
+                                     tf2_tf.getRotation().x())), //change rotation axis from xyzw to ywzx
                       tf::Vector3(tf2_tf.getOrigin().x(),
                                   tf2_tf.getOrigin().y(),
-                                  tf2_tf.getOrigin().z()));
+                                  tf2_tf.getOrigin().z()));  
 }
 tf2::Transform aruco_ros::arucoMarker2Tf2(const aruco::Marker &marker)
 {
@@ -80,8 +80,9 @@ tf2::Transform aruco_ros::arucoMarker2Tf2(const aruco::Marker &marker)
   tf2::Matrix3x3 tf_rot(rot.at<double>(0, 0), rot.at<double>(0, 1), rot.at<double>(0, 2), rot.at<double>(1, 0),
                        rot.at<double>(1, 1), rot.at<double>(1, 2), rot.at<double>(2, 0), rot.at<double>(2, 1),
                        rot.at<double>(2, 2));
-
-  tf2::Vector3 tf_orig(tran64.at<double>(0, 0), tran64.at<double>(1, 0), tran64.at<double>(2, 0));
+// x(0,0)=z(2,0) // y(1,0)= -x(0,0)   
+//  tf2::Vector3 tf_orig(tran64.at<double>(0, 0), tran64.at<double>(1, 0), tran64.at<double>(2, 0));
+  tf2::Vector3 tf_orig(tran64.at<double>(2, 0), -tran64.at<double>(0, 0), -tran64.at<double>(1, 0)); // change transilation axis and symbol +-
 
   return tf2::Transform(tf_rot, tf_orig);
 }
@@ -99,10 +100,10 @@ std::vector<aruco::Marker> aruco_ros::detectMarkers(const cv::Mat &img, const ar
       //        pal_vision_util::dctNormalization(inImage, inImageNorm,
       //        dctComponentsToRemove); inImage = inImageNorm;
     }
-
+    
     // detection results will go into "markers"
     markers.clear();
-    // ok, let's detect
+    // ok, let's detect 
     if (detector)
     {
       detector->detect(img, markers, cam_params, marker_size, false, correct_fisheye);
