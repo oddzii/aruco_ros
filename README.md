@@ -1,6 +1,6 @@
-Remark ::
+Remark
 =========
-This version changes an axis compatible with ROS standards.
+This version changes coordinate system compatible with ROS standards.
 
 
 aruco_ros
